@@ -1,94 +1,58 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React from 'react';
-
-import {
-  Form, Col, Button, InputGroup,
-  FormControl, Container, Navbar, Row, Table
-} from 'react-bootstrap';
+import 'jquery';
+import MovieRequest from './MovieRequest';
+import ListMovie from './ListMovie';
+import React, { useState, useEffect } from 'react';
 
 function App() {
-  const [form, setForm] = React.useState({
-    name:'',
-    email:''
-  })
+  const [movies, setMovies] = useState([]);
+  const [show, setShow] = useState(false);
+  const [imdbKey, setImdbKey] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [detailMovies, setDetailMovies] = useState([]);
 
-  const handleSubmit = (e)=>{
+
+  const getMovieRequest = async (keyword) => {
+    const url = `http://www.omdbapi.com/?apikey=e2b77af0&s=${keyword}`;
+    const response = await fetch(url);
+    const responseJson = await response.json();
+    if (responseJson.Search) {
+      setMovies(responseJson.Search);
+    }
+  };
+  const getDetailMovie = async (imdbKey) => {
+    const url = `http://www.omdbapi.com/?apikey=e2b77af0&i=${imdbKey}`;
+    const response = await fetch(url);
+    const responseJson = await response.json();
+    if (responseJson) {
+      setDetailMovies(responseJson);
+    }
+  };
+
+  useEffect(() => {
+    getMovieRequest(keyword);
+  }, [keyword]);
+
+  useEffect(() => {
+    getDetailMovie(imdbKey);
+  }, [imdbKey]);
+
+  const handleShow = (e) => {
     e.preventDefault();
-    console.log(form);
-    
+    setShow(true);
+    const data = e.target.dataset.imdbid;
+    setImdbKey(data);
   }
+  
+  const handleClose = () => setShow(false);
 
   return (
-    <>
-      <Navbar bg="dark" variant="dark" expand="lg">
-        <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
-      </Navbar>
-
-      <Container className="py">
-        <Row className="justify-content-md-center">
-          <Form onSubmit = {handleSubmit}>
-            <Form.Row className="align-items-center">
-              <Col xs="auto">
-                <Form.Label htmlFor="inlineFormInput" srOnly>
-                  Full Name
-                </Form.Label>
-                <Form.Control
-                  className="mb-2"
-                  id="inlineFormInput"
-                  placeholder="Full Name" value={form.name} onChange={(e) => {
-                    setForm({...form, name:e.target.value})
-                  }}
-                />
-              </Col>
-              <Col xs="auto">
-                <Form.Label htmlFor="inlineFormInputGroup" srOnly>
-                  Email
-                </Form.Label>
-                <InputGroup className="mb-2">
-                  <InputGroup.Prepend>
-                    <InputGroup.Text>@</InputGroup.Text>
-                  </InputGroup.Prepend>
-                  <FormControl id="inlineFormInputGroup" placeholder="Email" type="email" value={form.email} 
-                  onChange={(e)=>{setForm({...form,email:e.target.value})}} />
-                </InputGroup>
-              </Col>
-
-              <Col xs="auto">
-                <Button type="submit" variant="primary" className="mb-2" >
-                  Submit
-                </Button>
-              </Col>
-            </Form.Row>
-          </Form>
-        </Row>
-
-        <Table striped bordered hover size="sm">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Full Name</th>
-              <th>Email</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Muhamad Hanif Muhsin</td>
-              <td>m.hanif.muhsin@gmail.com</td>
-            </tr>
-
-          </tbody>
-        </Table>
-      </Container>
-
-
-    </>
+    <div>
+      <MovieRequest keyword={keyword} setKeyword={setKeyword} />
+      <ListMovie movies={movies} handleShow={handleShow} show={show}
+                 handleClose={handleClose} imdbKey={imdbKey} detailMovies={detailMovies} />
+    </div>
   );
 }
 
