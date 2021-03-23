@@ -1,8 +1,8 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'jquery';
-import MovieRequest from './MovieRequest';
-import ListMovie from './ListMovie';
+import MovieRequest from './components/MovieRequest';
+import ListMovie from './components/ListMovie';
 import React, { useState, useEffect } from 'react';
 
 function App() {

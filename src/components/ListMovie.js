@@ -3,7 +3,7 @@ import {
     Card, Container, ListGroup, ListGroupItem,
     Row, Col, Alert
 } from 'react-bootstrap';
-import DetailsMovies from './DetailsMovies';
+import DetailsMovies from '../components/DetailsMovies';
 
 const ListMovie = ({movies,handleShow,show, handleClose, imdbKey, detailMovies}) => {
     return (
